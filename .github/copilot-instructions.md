@@ -1,21 +1,21 @@
 ## Quick context
 
-This is a small ASP.NET Core Razor Pages application targeting .NET 9.0.
+This is a small ASP.NET Core MVC (Controllers + Views) application targeting .NET 9.0.
 
 - Project file: `WebApplication.csproj` (TargetFramework: `net9.0`, `Nullable` = enabled, `ImplicitUsings` enabled)
-- App entry: `Program.cs` — minimal WebApplication builder using Razor Pages
-- UI: Razor Pages under `Pages/` (page files + PageModel classes in `.cshtml.cs`)
-- Layout and shared view bits: `Pages/Shared/_Layout.cshtml`
+- App entry: `Program.cs` — minimal WebApplication builder using MVC
+- UI: Controllers under `Controllers/` and Views under `Views/ControllerName/Action.cshtml`
+- Layout and shared view bits: `Views/Shared/_Layout.cshtml`
 - Static assets: `wwwroot/` (third-party libs under `wwwroot/lib`, custom `wwwroot/js`, `wwwroot/css`)
 
 Use this file to guide automated agents (Copilot-style) so edits fit the project's structure and conventions.
 
 ## What to know up front
 
-- Routing: This repo uses Razor Pages (not MVC controllers). Pages are referenced with `asp-page` tag helpers (example: `<a asp-page="/Privacy">`).
-- Services: `builder.Services.AddRazorPages()` is the baseline. Add additional services (DbContexts, Auth, etc.) by editing `Program.cs` near the builder block.
-- Static assets mapping: `Program.cs` calls `app.MapStaticAssets()` and `app.MapRazorPages().WithStaticAssets()` — static web assets and `wwwroot` are served and versioned using tag helpers like `asp-append-version`.
-- Tag helpers & anchors: Keep UI-linking via Tag Helpers instead of hard-coded URLs where possible (see `Pages/Shared/_Layout.cshtml`).
+- Routing: This repo uses MVC conventional routing: `{controller=Home}/{action=Index}/{id?}`. Prefer tag helpers like `asp-controller` and `asp-action` over hard-coded URLs (example: `<a asp-controller="Home" asp-action="Privacy">`).
+- Services: `builder.Services.AddControllersWithViews()` is the baseline. Add additional services (DbContexts, Auth, etc.) by editing `Program.cs` near the builder block.
+- Static assets mapping: `Program.cs` calls `app.MapStaticAssets()` and maps MVC routes — static web assets and `wwwroot` are served and versioned using tag helpers like `asp-append-version`.
+- Tag helpers & anchors: Keep UI-linking via Tag Helpers instead of hard-coded URLs where possible (see `Views/Shared/_Layout.cshtml`).
 
 ## Build / run / debug (concrete)
 
@@ -36,9 +36,9 @@ Use this file to guide automated agents (Copilot-style) so edits fit the project
 
 ## Project-specific conventions & patterns
 
-- Razor-page naming: Page files are `Pages/Name.cshtml` with code-behind `Pages/Name.cshtml.cs` (PageModel). Keep page-specific business logic in the PageModel and UI-only logic in the `.cshtml`.
+- Controllers & actions: Place controllers in `Controllers/` (e.g., `HomeController`). Views live in `Views/<Controller>/<Action>.cshtml`. Keep controller actions thin and move UI-only logic into views or view models.
 - Static assets location: put vendor packages under `wwwroot/lib/` and project JS/CSS under `wwwroot/js` and `wwwroot/css`. Reference them in `_Layout.cshtml` using `~/` paths and `asp-append-version` when you want cache-busting.
-- Layout: `Pages/Shared/_Layout.cshtml` is the single layout. Update nav links there (use `asp-page`), not in each page.
+- Layout: `Views/Shared/_Layout.cshtml` is the single layout. Update nav links there using `asp-controller`/`asp-action`, not hard-coded URLs.
 - No tests currently: there is no test project; if you add tests, name the project `WebApplication.Tests` and place it alongside the solution.
 
 ## Integration points and external deps
@@ -61,24 +61,24 @@ Then use the EF Core CLI for migrations:
 
 ## Examples from the codebase (quick lookups)
 
-- Minimal service registration and endpoint mapping: `Program.cs` (lines around AddRazorPages / MapRazorPages)
-- Layout & asset references: `Pages/Shared/_Layout.cshtml` — shows `~/lib/bootstrap/dist/css/bootstrap.min.css`, `~/js/site.js`, and uses `asp-append-version="true"` for static assets.
-- Home page example: `Pages/Index.cshtml` — very small page; PageModel logic is in `Pages/Index.cshtml.cs` when present.
+- Minimal service registration and endpoint mapping: `Program.cs` (lines around `AddControllersWithViews` / `MapControllerRoute`)
+- Layout & asset references: `Views/Shared/_Layout.cshtml` — reference `~/lib/bootstrap/dist/css/bootstrap.min.css`, `~/js/site.js`, and use `asp-append-version="true"` for static assets.
+- Home page example: `Views/Home/Index.cshtml` rendered by `HomeController.Index()`.
 
 ## Helpful heuristics for edits
 
-- Keep changes localized: UI changes belong in `Pages/` or `wwwroot`; service wiring goes in `Program.cs` or small extension methods in `Extensions/`.
-- Prefer Tag Helpers for links and asset versioning (see `_Layout.cshtml`).
-- Avoid adding controllers — add Razor Pages unless you intentionally switch to MVC patterns and update `WebApplication.csproj` accordingly.
+- Keep changes localized: UI changes belong in `Views/` or `wwwroot`; service wiring and route config go in `Program.cs` or small extension methods in `Extensions/`.
+- Prefer Tag Helpers for links and asset versioning (see `_Layout.cshtml`): use `asp-controller`, `asp-action`, and `asp-route-*`.
+- Prefer conventional routing unless you have a clear reason to add attribute routing on controllers.
 
 ## When you need to modify project structure
 
-- Adding EF: update `WebApplication.csproj` to include EF packages, add `AppDbContext` under `Data/`, add connection strings to `appsettings.json`, and register the context in `Program.cs`.
-- Adding API controllers: create an `Areas/Api` or `Controllers/` folder and register `builder.Services.AddControllers()` and map endpoints with `app.MapControllers()`.
+- Adding EF: update `WebApplication.csproj` to include EF packages, add `AppDbContext` under `Data/`, add connection strings to `appsettings.json`, and register the context in `Program.cs` near `AddControllersWithViews()`.
+- Adding API controllers: create `Controllers/Api` (or `Areas/Api`) and register `builder.Services.AddControllers()`; map endpoints with `app.MapControllers()` alongside the MVC route.
 
 ## What I won't assume
 
-- There are no tests, no DbContext, and no external service integration shown in the repo. Do not remove or change `MapStaticAssets` / `WithStaticAssets` unless you understand static web assets mapping.
+- There are no tests, no DbContext, and no external service integration shown in the repo. Do not remove or change `MapStaticAssets` or static web asset versioning unless you understand how assets are served.
 
 ---
 
@@ -86,43 +86,42 @@ If any of this is missing or you have repository-specific rules I didn't detect 
 
 ## Common tasks (copy-paste snippets)
 
-### Add a new Razor Page
-Use Razor Pages (not controllers). To add a new page called `Products` with a PageModel:
+### Add a new MVC Controller + View
+To add a new `Products` controller with an `Index` view:
 
-1. Create the Razor view: `Pages/Products.cshtml`
+1) Create the controller: `Controllers/ProductsController.cs`
 
-```html
-@page
-@model ProductsModel
+```csharp
+using Microsoft.AspNetCore.Mvc;
+
+public class ProductsController : Controller
+{
+  public IActionResult Index()
+  {
+    // load data for the view (e.g., from a service)
+    return View();
+  }
+}
+```
+
+2) Create the view: `Views/Products/Index.cshtml`
+
+```cshtml
 @{
-    ViewData["Title"] = "Products";
+  ViewData["Title"] = "Products";
 }
 
 <h1>Products</h1>
 <!-- page UI here -->
 ```
 
-2. Create the PageModel: `Pages/Products.cshtml.cs`
-
-```csharp
-using Microsoft.AspNetCore.Mvc.RazorPages;
-
-public class ProductsModel : PageModel
-{
-    public void OnGet()
-    {
-        // load page data
-    }
-}
-```
-
-3. Link from the layout or other pages using tag helpers:
+3) Link from the layout or other views using tag helpers:
 
 ```html
-<a asp-page="/Products">Products</a>
+<a asp-controller="Products" asp-action="Index">Products</a>
 ```
 
-If you prefer the dotnet CLI for scaffolding, you can use Visual Studio scaffolding or create the two files manually — the framework discovers Razor Pages by file location.
+If you prefer scaffolding, use Visual Studio to scaffold a controller with views using Entity Framework, or create the two files manually.
 
 ### EF Core + SQL Server (copy-paste wiring)
 This repo doesn't currently include EF Core. If you add EF Core + SQL Server, here are minimal, copy-paste snippets.
@@ -151,7 +150,7 @@ public class AppDbContext : DbContext
 }
 ```
 
-3) Register the context in `Program.cs` (near `builder.Services.AddRazorPages()`):
+3) Register the context in `Program.cs` (near `builder.Services.AddControllersWithViews()`):
 
 ```csharp
 builder.Services.AddDbContext<AppDbContext>(options =>
