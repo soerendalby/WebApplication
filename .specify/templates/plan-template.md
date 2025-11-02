@@ -21,6 +21,7 @@
 **Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
 **Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
 **Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
+<!-- Tests are OPTIONAL unless explicitly requested. Code MUST be testable-by-design. -->
 **Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
 **Project Type**: [single/web/mobile - determines source structure]  
 **Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
@@ -31,7 +32,19 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+The plan MUST satisfy these gates (derived from the repository constitution):
+
+- Testable-by-Design: Design enables testing (DI-friendly services, small pure units), even if
+  automated tests are not requested.
+- Modern, Sleek UI/UX: Uses Bootstrap-based, responsive, accessible patterns; unobtrusive scripts.
+- Incremental, Localized Changes: Scope is minimal and avoids unnecessary cross-cutting edits.
+- ASP.NET Conventions: Uses tag helpers (`asp-controller`, `asp-action`, `asp-append-version`),
+  static assets under `wwwroot/`, and conventional routing.
+- Data Default: If persistence is needed, prefer EF Core + SQLite unless there is a justified
+  reason to choose differently.
+- Manual Validation Plan: Include clear manual steps to validate the feature independently.
+
+If any gate cannot be met, document the deviation and rationale here.
 
 ## Project Structure
 

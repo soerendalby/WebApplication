@@ -26,7 +26,7 @@ Project layout highlights
 Notes for contributors
 - The project uses Razor Pages (not MVC controllers). Keep UI code in `.cshtml` and page logic in PageModel classes.
 - Static assets are versioned with `asp-append-version` in the layout; `Program.cs` calls `MapStaticAssets()` and `WithStaticAssets()` to enable the mapping used by the template.
-- There is no DbContext or tests in the repo. If you add EF Core / SQL Server, register the DbContext in `Program.cs` and add connection strings to `appsettings.json`.
+- There is no DbContext or tests in the repo. If you add EF Core / SQLite, register the DbContext in `Program.cs` and add connection strings to `appsettings.json`.
 
 How to add a Razor Page (summary)
 1. Create `Pages/YourPage.cshtml` with `@page` and UI markup.

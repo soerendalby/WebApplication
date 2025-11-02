@@ -17,6 +17,17 @@ Use this file to guide automated agents (Copilot-style) so edits fit the project
 - Static assets mapping: `Program.cs` calls `app.MapStaticAssets()` and maps MVC routes — static web assets and `wwwroot` are served and versioned using tag helpers like `asp-append-version`.
 - Tag helpers & anchors: Keep UI-linking via Tag Helpers instead of hard-coded URLs where possible (see `Views/Shared/_Layout.cshtml`).
 
+## Technical stack & UI standards
+
+- Platform: .NET 9 (ASP.NET Core MVC). Static assets live under `wwwroot/` and are mapped via
+  `app.MapStaticAssets()`. Use `asp-append-version` for cache-busting.
+- UI stack: Bootstrap (under `wwwroot/lib/bootstrap`) and jQuery (use minimally). Prefer
+  unobtrusive scripts and keep custom styling in `wwwroot/css`.
+- Navigation: Use tag helpers for URLs (`asp-controller`, `asp-action`, `asp-route-*`). Keep the
+  layout in `Views/Shared/_Layout.cshtml` and avoid hard-coded paths.
+- Data: If adding persistence, prefer EF Core + SQLite in this repo. Register your DbContext in
+  `Program.cs` and set `ConnectionStrings:DefaultConnection` in `appsettings.json`.
+
 ## Build / run / debug (concrete)
 
 - Restore & build (CLI):
@@ -43,12 +54,12 @@ Use this file to guide automated agents (Copilot-style) so edits fit the project
 
 ## Integration points and external deps
 
-- Database: there is no DbContext or connection string in the repository. If adding EF Core + SQL Server, add `ConnectionStrings` to `appsettings.json` and register your context in `Program.cs`:
+- Database: there is no DbContext or connection string in the repository. If adding EF Core + SQLite, add `ConnectionStrings` to `appsettings.json` and register your context in `Program.cs`:
 
 ```csharp
 // example (add when EF packages are added)
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+  options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 ```
 
 Then use the EF Core CLI for migrations:
@@ -123,14 +134,14 @@ public class ProductsController : Controller
 
 If you prefer scaffolding, use Visual Studio to scaffold a controller with views using Entity Framework, or create the two files manually.
 
-### EF Core + SQL Server (copy-paste wiring)
-This repo doesn't currently include EF Core. If you add EF Core + SQL Server, here are minimal, copy-paste snippets.
+### EF Core + SQLite (copy-paste wiring)
+This repo doesn't currently include EF Core. If you add EF Core + SQLite, here are minimal, copy-paste snippets.
 
 1) Add packages to the project (update `WebApplication.csproj` or run `dotnet add package`):
 
 ```xml
 <ItemGroup>
-  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.*" />
+  <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.*" />
   <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.*" />
 </ItemGroup>
 ```
@@ -154,14 +165,14 @@ public class AppDbContext : DbContext
 
 ```csharp
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+  options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 ```
 
 4) Add a connection string to `appsettings.json`:
 
 ```json
 "ConnectionStrings": {
-  "DefaultConnection": "Server=localhost;Database=WebAppDb;Trusted_Connection=True;MultipleActiveResultSets=true"
+  "DefaultConnection": "Data Source=WebApp.db"
 }
 ```
 

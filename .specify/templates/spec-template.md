@@ -5,11 +5,11 @@
 **Status**: Draft  
 **Input**: User description: "$ARGUMENTS"
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Validation *(mandatory)*
 
 <!--
   IMPORTANT: User stories should be PRIORITIZED as user journeys ordered by importance.
-  Each user story/journey must be INDEPENDENTLY TESTABLE - meaning if you implement just ONE of them,
+  Each user story/journey must be INDEPENDENTLY VALIDATABLE - meaning if you implement just ONE of them,
   you should still have a viable MVP (Minimum Viable Product) that delivers value.
   
   Assign priorities (P1, P2, P3, etc.) to each story, where P1 is the most critical.
@@ -26,7 +26,7 @@
 
 **Why this priority**: [Explain the value and why it has this priority level]
 
-**Independent Test**: [Describe how this can be tested independently - e.g., "Can be fully tested by [specific action] and delivers [specific value]"]
+**Independent Validation**: [Describe how this can be validated independently (manual steps are OK) - e.g., "User can do [action] and sees [value]"]
 
 **Acceptance Scenarios**:
 
@@ -41,7 +41,7 @@
 
 **Why this priority**: [Explain the value and why it has this priority level]
 
-**Independent Test**: [Describe how this can be tested independently]
+**Independent Validation**: [Describe how this can be validated independently]
 
 **Acceptance Scenarios**:
 
@@ -55,7 +55,7 @@
 
 **Why this priority**: [Explain the value and why it has this priority level]
 
-**Independent Test**: [Describe how this can be tested independently]
+**Independent Validation**: [Describe how this can be validated independently]
 
 **Acceptance Scenarios**:
 
@@ -76,6 +76,15 @@
 - How does system handle [error scenario]?
 
 ## Requirements *(mandatory)*
+### Constitution Alignment *(checklist)*
+
+- Testable-by-Design: The proposed design exposes seams for testing later (DI, small pure units) even if tests are not requested now.
+- Modern UI/UX: Uses Bootstrap-based, responsive, accessible UI patterns with unobtrusive scripts.
+- Incremental Change: Scope is small and localized; avoids unnecessary refactors.
+- ASP.NET Conventions: Uses tag helpers (`asp-controller`, `asp-action`, `asp-append-version`), assets in `wwwroot/`.
+- Data Default: If persistence is required, EF Core + SQLite is preferred unless justified.
+- Independent Validation: Manual steps included to validate each story on its own.
+
 
 <!--
   ACTION REQUIRED: The content in this section represents placeholders.
