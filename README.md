@@ -17,6 +17,10 @@ dotnet run --project WebApplication.csproj
 dotnet watch run
 ```
 
+Feature quickstart and specs
+- Car booking system feature: see `specs/001-car-booking-system/quickstart.md` for run/validate steps.
+- Full feature spec and planning artifacts live under `specs/001-car-booking-system/`.
+
 Project layout highlights
 - `Program.cs` — app entry and service registration (calls `builder.Services.AddRazorPages()` and maps endpoints).
 - `Pages/` — Razor Pages (.cshtml + PageModel .cshtml.cs). Use `asp-page` tag helpers for links.

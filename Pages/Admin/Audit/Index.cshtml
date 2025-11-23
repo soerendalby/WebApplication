@@ -1,0 +1,93 @@
+@page
+@model WebApplication.Pages.Admin.Audit.IndexModel
+@{
+    ViewData["Title"] = "Audit log";
+}
+
+<div class="card bg-dark border-secondary shadow-sm mb-4">
+  <div class="card-body">
+    <h5 class="card-title">Filters</h5>
+    <form method="get" class="row g-3">
+      <div class="col-md-2">
+        <label class="form-label">From</label>
+        <input asp-for="From" class="form-control" />
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">To</label>
+        <input asp-for="To" class="form-control" />
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Action contains</label>
+        <input asp-for="ActionContains" class="form-control" placeholder="approve|reject|login" />
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Role</label>
+        <select asp-for="Role" class="form-select">
+          <option value="">Any</option>
+          <option value="student">student</option>
+          <option value="approver">approver</option>
+          <option value="admin">admin</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Email contains</label>
+        <input asp-for="EmailContains" class="form-control" placeholder="user@example.com" />
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Request Id</label>
+        <input asp-for="RequestId" class="form-control" placeholder="GUID" />
+      </div>
+      <div class="col-12 d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Apply</button>
+        <a class="btn btn-outline-light" asp-page="/Admin/Audit/Index">Reset</a>
+        <form method="get" asp-page-handler="Export" class="d-inline">
+          <input type="hidden" name="From" value="@Model.From?.ToString("yyyy-MM-dd")" />
+          <input type="hidden" name="To" value="@Model.To?.ToString("yyyy-MM-dd")" />
+          <input type="hidden" name="ActionContains" value="@Model.ActionContains" />
+          <input type="hidden" name="Role" value="@Model.Role" />
+          <input type="hidden" name="EmailContains" value="@Model.EmailContains" />
+          <input type="hidden" name="RequestId" value="@Model.RequestId" />
+          <button type="submit" class="btn btn-outline-success">Export CSV</button>
+        </form>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card bg-dark border-secondary shadow-sm">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h5 class="card-title mb-0">Audit log (@Model.Logs.Count)</h5>
+      <small class="text-muted">Showing latest 500</small>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-dark table-striped table-hover align-middle">
+        <thead>
+          <tr>
+            <th>Timestamp (UTC)</th>
+            <th>User</th>
+            <th>Role</th>
+            <th>Action</th>
+            <th>Request</th>
+            <th>Program</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+        @foreach (var a in Model.Logs)
+        {
+          <tr>
+            <td><span class="text-nowrap">@a.Timestamp.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")</span></td>
+            <td><code>@a.UserEmail</code></td>
+            <td>@a.Role</td>
+            <td><span class="badge bg-secondary">@a.Action</span></td>
+            <td><small class="text-muted">@a.RequestId</small></td>
+            <td><small class="text-muted">@a.StudyProgramId</small></td>
+            <td class="text-truncate" style="max-width: 360px;" title="@a.Details">@a.Details</td>
+          </tr>
+        }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

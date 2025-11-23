@@ -1,3 +1,14 @@
+:root {
+  --bg: #121212;
+  --bg-elev: #1a1a1a;
+  --bg-elev-2: #1e1e1e;
+  --fg: #f5f5f5;
+  --muted: #bfbfbf;
+  --accent: #FFA500;
+  --accent-200: #ffc04d;
+  --border: #333;
+}
+
 html {
   font-size: 14px;
 }
@@ -17,8 +28,21 @@ html {
   min-height: 100%;
 }
 
+/* Sidebar adjustments */
+.sidebar .list-group-item {
+  border-color: var(--border);
+}
+.sidebar .list-group-item:hover {
+  background-color: var(--bg-elev);
+}
+.min-vh-100 { min-height: 100vh; }
+
 body {
   margin-bottom: 60px;
+  background-color: var(--bg);
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
@@ -29,3 +53,73 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+/* Dark theme headings: orange */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--accent);
+}
+
+/* Links in dark theme */
+a { color: var(--accent); text-decoration: none; }
+a:hover, a:focus { color: var(--accent-200); text-decoration: underline; }
+
+/* Footer on dark background */
+footer.footer { background-color: var(--bg-elev); }
+
+/* Form controls and inputs better contrast */
+.form-control, .form-select, .form-check-input { background-color: var(--bg-elev-2); color: var(--fg); border-color: var(--border); }
+.form-control:focus, .form-select:focus { color: #f5f5f5; }
+.form-control, .form-select, input, textarea { caret-color: #f5f5f5; }
+.form-label, label { color: #f5f5f5; }
+.form-control::placeholder { color: var(--muted); opacity: 1; }
+.form-select::placeholder { color: var(--muted); opacity: 1; }
+.form-check-label { color: var(--fg); }
+.form-check-input { accent-color: var(--accent); }
+.form-control:focus, .form-select:focus, .form-check-input:focus {
+  background-color: #232323;
+  border-color: #FFA500;
+  box-shadow: 0 0 0 0.2rem rgba(255,165,0,0.25);
+}
+
+/* Autofill on Chromium (Edge/Chrome) for dark theme */
+input.form-control:-webkit-autofill,
+textarea.form-control:-webkit-autofill,
+select.form-select:-webkit-autofill {
+  -webkit-text-fill-color: var(--fg);
+  caret-color: var(--fg);
+  -webkit-box-shadow: 0 0 0px 1000px var(--bg-elev-2) inset;
+    box-shadow: 0 0 0px 1000px var(--bg-elev-2) inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Tables */
+table {
+  color: inherit;
+}
+thead th {
+  color: var(--accent);
+}
+
+/* Cards & navbar */
+.card.bg-dark { background-color: var(--bg-elev) !important; }
+/* Ensure adequate contrast for text inside dark cards */
+.card.bg-dark, .card.bg-dark .card-body, .card.bg-dark .card-text { color: var(--fg) !important; }
+.card.bg-dark .text-muted, .card.bg-dark .text-body-secondary { color: #d0d5da !important; }
+.navbar-dark .navbar-brand { color: var(--accent); }
+.navbar-dark .navbar-brand:hover { color: var(--accent-200); }
+.navbar-dark .nav-link { color: var(--fg); opacity: 0.9; }
+.navbar-dark .nav-link:hover { color: var(--fg); opacity: 1; }
+
+/* Buttons */
+.btn-primary { background-color: var(--accent); border-color: var(--accent); color: #222; }
+.btn-primary:hover { background-color: var(--accent-200); border-color: var(--accent-200); color: #222; }
+.btn-outline-light { color: var(--fg); border-color: var(--fg); }
+.btn-outline-light:hover { background-color: var(--fg); color: #222; }
+
+/* Input groups on dark */
+.input-group .form-control, .input-group .form-select { background-color: var(--bg-elev-2); border-color: var(--border); color: var(--fg); }
+.input-group-text { background-color: var(--bg-elev); border-color: var(--border); color: var(--fg); }
+
+/* Utility */
+.text-muted { color: var(--muted) !important; }
+.badge-accent { background-color: var(--accent); color: #222; }

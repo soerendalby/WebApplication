@@ -4,7 +4,81 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container py-4">
+    <h1 class="display-5 mb-4">Welcome</h1>
+
+    @if (!(User?.Identity?.IsAuthenticated ?? false))
+    {
+        <div class="alert alert-dark border" role="alert">
+            Please sign in to continue.
+            <a class="btn btn-sm btn-primary ms-2" asp-page="/Auth/Login">Sign in</a>
+        </div>
+        <p class="text-muted">Demo accounts by email domain: <code>student.dk</code> (student), <code>admin.dk</code> (approver), <code>mb.dk</code> (admin). Password: <code>demo</code>.</p>
+    }
+    else
+    {
+        var role = User.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
+        <div class="row g-3">
+            @if (role == "student")
+            {
+                <div class="col-md-6">
+                    <div class="card bg-dark border-secondary h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Student</h5>
+                            <p class="card-text">
+                                Create a new car booking request or review your requests.
+                                @if (Model.StudentActiveRequests > 0)
+                                {
+                                    <span class="badge bg-warning text-dark ms-2">@Model.StudentActiveRequests pending</span>
+                                }
+                            </p>
+                            <a class="btn btn-primary me-2" asp-page="/Requests/New">New request</a>
+                            <a class="btn btn-outline-light" asp-page="/Requests/Index">My requests</a>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (role == "approver")
+            {
+                <div class="col-md-6">
+                    <div class="card bg-dark border-secondary h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Approver</h5>
+                            <p class="card-text">
+                                See pending requests in your queue and take action.
+                                @if (Model.ApproverPendingCount > 0)
+                                {
+                                    <span class="badge bg-danger ms-2">@Model.ApproverPendingCount waiting</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success ms-2">All caught up!</span>
+                                }
+                            </p>
+                            <a class="btn btn-primary" asp-page="/Approvals/Index">Approval queue</a>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (role == "admin")
+            {
+                <div class="col-md-6">
+                    <div class="card bg-dark border-secondary h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">MB Admin</h5>
+                            <p class="card-text">
+                                Manage study programs and approvers, and review audit logs.
+                                <span class="badge bg-info text-dark ms-2">@Model.AdminProgramCount programs</span>
+                            </p>
+                            <a class="btn btn-primary me-2" asp-page="/Admin/Programs/Index">Study programs</a>
+                            <a class="btn btn-outline-light" asp-page="/Admin/Audit/Index">Audit log</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    <div class="mt-4">
+        <p class="text-muted small">Tip: Use the navbar to sign in/out. The UI uses a dark theme with white body text and orange headings.</p>
+    </div>
 </div>

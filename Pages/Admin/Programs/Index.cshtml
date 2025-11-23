@@ -1,0 +1,97 @@
+@page
+@model WebApplication.Pages.Admin.Programs.IndexModel
+@{
+        ViewData["Title"] = "Study programs";
+}
+<h1>Study programs</h1>
+
+
+
+<div class="card bg-dark border-secondary shadow-sm mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Create program</h5>
+        <form method="post" asp-page-handler="Create" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Name</label>
+                <input name="name" class="form-control" placeholder="e.g., Computer Science" />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Description</label>
+                <input name="description" class="form-control" placeholder="Optional" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Reminder days</label>
+                <input name="reminderDays" class="form-control" placeholder="8" inputmode="numeric" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Expiry days</label>
+                <input name="expiryDays" class="form-control" placeholder="10" inputmode="numeric" />
+            </div>
+            <div class="col-12">
+                <button class="btn btn-primary" type="submit">Create</button>
+            </div>
+        </form>
+    </div>
+    </div>
+
+@if (!Model.Programs.Any())
+{
+    <p class="text-muted">No programs yet.</p>
+}
+else
+{
+        <div class="table-responsive">
+            <table class="table table-dark table-striped table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Reminder days</th>
+                    <th>Expiry days</th>
+                    <th>Approvers</th>
+                    <th>Assign approver</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model.Programs)
+                {
+                    <tr>
+                        <td>@p.Name</td>
+                        <td>@(p.ReminderDays?.ToString() ?? "-")</td>
+                        <td>@(p.ExpiryDays?.ToString() ?? "-")</td>
+                        <td>
+                            @if (p.Approvers == null || !p.Approvers.Any())
+                            {
+                                <span class="text-muted">None</span>
+                            }
+                            else
+                            {
+                                <ul class="list-unstyled mb-0">
+                                    @foreach (var a in p.Approvers)
+                                    {
+                                        <li>
+                                            <code>@a.User?.Email</code>
+                                            <form method="post" asp-page-handler="RemoveApprover" class="d-inline ms-2">
+                                                <input type="hidden" name="approverId" value="@a.Id" />
+                                                <button class="btn btn-sm btn-outline-danger" type="submit">Remove</button>
+                                            </form>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        </td>
+                        <td>
+                                <form method="post" asp-page-handler="AddApprover" class="d-flex">
+                                    <input type="hidden" name="programId" value="@p.Id" />
+                                    <div class="input-group input-group-sm me-2" style="max-width: 26rem;">
+                                        <span class="input-group-text">&#64;</span>
+                                        <input name="email" class="form-control" placeholder="approver@admin.dk" />
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-light" type="submit">Assign</button>
+                                </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

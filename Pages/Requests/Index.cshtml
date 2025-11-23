@@ -1,0 +1,35 @@
+@page
+@model WebApplication.Pages.Requests.IndexModel
+@{
+    ViewData["Title"] = "My requests";
+}
+<h1>My requests</h1>
+
+@if (!Model.Requests.Any())
+{
+    <p class="text-muted">No requests yet.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-dark table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>Submitted</th>
+                    <th>Status</th>
+                    <th>Expires</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var r in Model.Requests)
+            {
+                <tr>
+                    <td>@r.SubmittedAt.ToLocalTime()</td>
+                    <td>@r.Status</td>
+                    <td>@(r.ExpiresAt?.ToLocalTime().ToString() ?? "-")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

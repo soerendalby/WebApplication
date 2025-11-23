@@ -1,0 +1,30 @@
+@*
+  Sidebar navigation (role-aware) using Bootstrap list groups.
+  Visible on lg+ as a sticky column; on smaller screens use the offcanvas in the layout.
+*@
+<nav aria-label="Sidebar" class="sidebar list-group list-group-flush">
+  <a class="list-group-item list-group-item-action bg-dark text-light border-secondary" asp-page="/Index">Home</a>
+
+  @if (User?.HasClaim("role", "student") ?? false)
+  {
+    <div class="list-group-item bg-dark text-uppercase small text-muted border-secondary">Student</div>
+    <a class="list-group-item list-group-item-action bg-dark text-light border-secondary" asp-page="/Requests/New">New request</a>
+    <a class="list-group-item list-group-item-action bg-dark text-light border-secondary" asp-page="/Requests/Index">My requests</a>
+  }
+
+  @if (User?.HasClaim("role", "approver") ?? false)
+  {
+    <div class="list-group-item bg-dark text-uppercase small text-muted border-secondary">Approver</div>
+    <a class="list-group-item list-group-item-action bg-dark text-light border-secondary" asp-page="/Approvals/Index">Approval queue</a>
+  }
+
+  @if (User?.HasClaim("role", "admin") ?? false)
+  {
+    <div class="list-group-item bg-dark text-uppercase small text-muted border-secondary">Admin</div>
+    <a class="list-group-item list-group-item-action bg-dark text-light border-secondary" asp-page="/Admin/Programs/Index">Programs</a>
+    <a class="list-group-item list-group-item-action bg-dark text-light border-secondary" asp-page="/Admin/Audit/Index">Audit</a>
+  }
+
+  <div class="list-group-item bg-dark text-uppercase small text-muted border-secondary">Other</div>
+  <a class="list-group-item list-group-item-action bg-dark text-light border-secondary" asp-page="/Privacy">Privacy</a>
+</nav>
